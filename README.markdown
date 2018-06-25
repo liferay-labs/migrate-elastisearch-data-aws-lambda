@@ -39,3 +39,8 @@ DEV2CI: Migrate from DEV to CI
   "role": "arn:aws:iam::931050637112:role/stack-elasticsearch-migra-ElasticsearchMigrationsR-1T27246N82Q8N"
 }
 ```
+
+Elasticsearch references:
+
+- [Snapshot And Restore](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-snapshots.html#modules-snapshots)
+
