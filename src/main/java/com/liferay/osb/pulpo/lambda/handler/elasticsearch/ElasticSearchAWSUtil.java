@@ -76,7 +76,8 @@ public class ElasticSearchAWSUtil {
 	private static String _backupIndices(
 		MigrationRequest migration, LambdaLogger lambdaLogger) {
 
-		_createBackupRepo(migration.getBucket(), migration.getRole(),
+		_createBackupRepo(
+			migration.getBucket(), migration.getRole(),
 			migration.getOriginHost());
 
 		return _createBackup(migration, lambdaLogger);
@@ -143,8 +144,9 @@ public class ElasticSearchAWSUtil {
 	private static String _createBackup(
 		MigrationRequest migrationRequest, LambdaLogger lambdaLogger) {
 
-		String backupName = migrationRequest.getOriginIndicesPrefix() +
-			_format.format(new Date());
+		String backupName =
+			migrationRequest.getOriginIndicesPrefix() +
+				_format.format(new Date());
 
 		lambdaLogger.log("Creating Backup; " + backupName);
 
@@ -161,15 +163,15 @@ public class ElasticSearchAWSUtil {
 
 	private static void _createBackupRepo(
 		String bucket, String role, String host) {
-		String content =
-			"{\"type\": \"s3\",\"settings\": { \"bucket\": \"" +
-				bucket +
-					"\",\"endpoint\": \"s3.amazonaws.com\",\"role_arn\": \"" +
-						role + "\"}}";
 
-		Request<Void> setupBucket = _createAwsRequest(host,
-			"/_snapshot/" + bucket, Collections.emptyMap(), HttpMethodName.PUT,
-			content);
+		String content =
+			"{\"type\": \"s3\",\"settings\": { \"bucket\": \"" + bucket +
+				"\",\"endpoint\": \"s3.amazonaws.com\",\"role_arn\": \"" +
+					role + "\"}}";
+
+		Request<Void> setupBucket = _createAwsRequest(
+			host, "/_snapshot/" + bucket, Collections.emptyMap(),
+			HttpMethodName.PUT, content);
 
 		_executeAwsRequest(setupBucket);
 	}
@@ -213,7 +215,8 @@ public class ElasticSearchAWSUtil {
 	private static String _restoreBackup(
 		MigrationRequest request, String backup, LambdaLogger logger) {
 
-		_createBackupRepo(request.getBucket(), request.getRole(),
+		_createBackupRepo(
+			request.getBucket(), request.getRole(),
 			request.getDestinationHost());
 
 		Request<Void> awsRequest = _createAwsRequest(

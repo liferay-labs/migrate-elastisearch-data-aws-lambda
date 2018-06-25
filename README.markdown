@@ -5,7 +5,7 @@
 ```json
 {
  "originHost": "origin endpoint of the aws elasticsearch domain",
- "destinationHost": "destination endpoint of the aws elasticsearch domain", 
+ "destinationHost": "destination endpoint of the aws elasticsearch domain",
  "originIndicesPrefix": "Origin indices prefix",
  "destinationIndicesPrefix": "Destination indices prefix",
  "bucket": "Snapshot repository name",
@@ -15,15 +15,14 @@
 
 PROD2DEV: Migrate from PROD to DEV
 
-
 ```json
 {
- "originHost": "https://search-pulpo-elasticsearch-prod-t7zkxvse3iizvi3i6rgckxv5ee.us-east-1.es.amazonaws.com/",
- "destinationHost": "https://search-pulpo-elasticsearch-dev-2xp4jucrau2hcqsowbsaf5vnfu.us-east-1.es.amazonaws.com/", 
- "originIndicesPrefix": "prod_",
- "destinationIndicesPrefix": "dev_",
- "bucket": "us-east-1-pulpo-engine-contacts-elasticsearch-migrations",
- "role": "arn:aws:iam::931050637112:role/stack-elasticsearch-migra-ElasticsearchMigrationsR-1T27246N82Q8N"
+  "originHost": "https://search-pulpo-elasticsearch-prod-t7zkxvse3iizvi3i6rgckxv5ee.us-east-1.es.amazonaws.com/",
+  "destinationHost": "https://search-pulpo-elasticsearch-dev-2xp4jucrau2hcqsowbsaf5vnfu.us-east-1.es.amazonaws.com/",
+  "originIndicesPrefix": "prod_",
+  "destinationIndicesPrefix": "dev_",
+  "bucket": "us-east-1-pulpo-engine-contacts-elasticsearch-migrations",
+  "role": "arn:aws:iam::931050637112:role/us-east-1-pulpo-engine-contacts-elasticsearch-migrations-role"
 }
 ```
 
@@ -36,11 +35,23 @@ DEV2CI: Migrate from DEV to CI
   "originIndicesPrefix": "dev_",
   "destinationIndicesPrefix": "ci-migrated-from-dev_",
   "bucket": "us-east-1-pulpo-engine-contacts-elasticsearch-migrations",
-  "role": "arn:aws:iam::931050637112:role/stack-elasticsearch-migra-ElasticsearchMigrationsR-1T27246N82Q8N"
+  "role": "arn:aws:iam::931050637112:role/us-east-1-pulpo-engine-contacts-elasticsearch-migrations-role"
+}
+```
+
+PROD2CI
+
+```json
+{
+  "originHost": "https://search-pulpo-elasticsearch-prod-t7zkxvse3iizvi3i6rgckxv5ee.us-east-1.es.amazonaws.com/",
+  "destinationHost": "https://search-pulpo-elasticsearch-ci-24ohek6gmy4rsiqvwtuqexhl6q.us-east-1.es.amazonaws.com/",
+  "originIndicesPrefix": "prod_",
+  "destinationIndicesPrefix": "ci-from-prod_",
+  "bucket": "us-east-1-pulpo-engine-contacts-elasticsearch-migrations",
+  "role": "arn:aws:iam::931050637112:role/us-east-1-pulpo-engine-contacts-elasticsearch-migrations-role"
 }
 ```
 
 Elasticsearch references:
 
 - [Snapshot And Restore](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-snapshots.html#modules-snapshots)
-
