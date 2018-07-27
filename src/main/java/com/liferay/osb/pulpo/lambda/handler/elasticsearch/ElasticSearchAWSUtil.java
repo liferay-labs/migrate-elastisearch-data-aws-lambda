@@ -98,9 +98,31 @@ public class ElasticSearchAWSUtil {
 		Response<AmazonWebServiceResponse<String>> awsResponse =
 			_executeAwsRequest(awsRequest);
 
+		String message = _AMAZON_WEB_SERVICE_RESPONSE +
+			awsResponse.getAwsResponse().getResult();
+
+		lambdaLogger.log(message);
 		lambdaLogger.log(
-			_AMAZON_WEB_SERVICE_RESPONSE +
-				awsResponse.getAwsResponse().getResult());
+			"Snapshot in progress: " + message.contains("IN_PROGRESS"));
+
+		while (message.contains("IN_PROGRESS")) {
+			lambdaLogger.log(
+				"Waiting 5s since snapshot migration is still in progress...");
+
+			try {
+				Thread.sleep(5000);
+			}
+			catch (InterruptedException e) {
+				lambdaLogger.log(e.getMessage());
+			}
+
+			awsResponse = _executeAwsRequest(awsRequest);
+
+			message = _AMAZON_WEB_SERVICE_RESPONSE +
+				awsResponse.getAwsResponse().getResult();
+
+			lambdaLogger.log(message);
+		}
 
 		if (awsResponse.getHttpResponse().getStatusCode() == 404) {
 			throw new IllegalArgumentException(
