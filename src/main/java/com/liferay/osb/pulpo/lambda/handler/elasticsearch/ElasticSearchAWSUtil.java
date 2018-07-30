@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,31 +99,9 @@ public class ElasticSearchAWSUtil {
 		Response<AmazonWebServiceResponse<String>> awsResponse =
 			_executeAwsRequest(awsRequest);
 
-		String message = _AMAZON_WEB_SERVICE_RESPONSE +
-			awsResponse.getAwsResponse().getResult();
-
-		lambdaLogger.log(message);
 		lambdaLogger.log(
-			"Snapshot in progress: " + message.contains("IN_PROGRESS"));
-
-		while (message.contains("IN_PROGRESS")) {
-			lambdaLogger.log(
-				"Waiting 5s since snapshot migration is still in progress...");
-
-			try {
-				Thread.sleep(5000);
-			}
-			catch (InterruptedException e) {
-				lambdaLogger.log(e.getMessage());
-			}
-
-			awsResponse = _executeAwsRequest(awsRequest);
-
-			message = _AMAZON_WEB_SERVICE_RESPONSE +
-				awsResponse.getAwsResponse().getResult();
-
-			lambdaLogger.log(message);
-		}
+			_AMAZON_WEB_SERVICE_RESPONSE +
+				awsResponse.getAwsResponse().getResult());
 
 		if (awsResponse.getHttpResponse().getStatusCode() == 404) {
 			throw new IllegalArgumentException(
@@ -175,7 +154,7 @@ public class ElasticSearchAWSUtil {
 		Request<Void> backupRequest = _createAwsRequest(
 			migrationRequest.getOriginHost(),
 			"/_snapshot/" + migrationRequest.getBucket() + "/" + backupName,
-			Collections.emptyMap(), HttpMethodName.PUT,
+			_getBackupParams(), HttpMethodName.PUT,
 			"{\"ignore_unavailable\": true, \"include_global_state\": false}");
 
 		_executeAwsRequest(backupRequest);
@@ -232,6 +211,14 @@ public class ElasticSearchAWSUtil {
 		).execute(
 			new StringResponseHandler()
 		);
+	}
+
+	private static Map<String, List<String>> _getBackupParams() {
+		Map<String, List<String>> params = new HashMap<>();
+
+		params.put("wait_for_completion", Collections.singletonList("true"));
+
+		return params;
 	}
 
 	private static String _restoreBackup(
